@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/ui/qml">
+        <file alias="App.qml">src/ui/qml/App.qml</file>
+        <file alias="LoginPage.qml">src/ui/qml/LoginPage.qml</file>
+        <file alias="Main.qml">src/ui/qml/Main.qml</file>
+        <file alias="GroupPage.qml">src/ui/qml/GroupPage.qml</file>
+        <file alias="DisciplinesPage.qml">src/ui/qml/DisciplinesPage.qml</file>
+        <file alias="GradeSheetPage.qml">src/ui/qml/GradeSheetPage.qml</file>
+        <file alias="ApprovalPage.qml">src/ui/qml/ApprovalPage.qml</file>
+    </qresource>
+</RCC>

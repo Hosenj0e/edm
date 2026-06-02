@@ -1,0 +1,33 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activityFontSize 11
+skinparam activityFontName Arial
+
+(*) --> "Ввод параметров:\ngroupId, disciplineId"
+
+if "Сессия открыта?\nm_repo != nullptr" then
+  -->[нет] "Возврат пустой строки"
+  --> (*)
+else
+  -->[да] "Очистить последнюю ошибку"
+endif
+
+--> "Вызов метода репозитория:\ncreateGradeSheet(groupId,\ndisciplineId, &sheetId)"
+
+if "Создание\nуспешно?" then
+  -->[нет] "Установить ошибку:\nНе удалось создать ведомость"
+  --> "Возврат пустой строки"
+  --> (*)
+else
+  -->[да] "Обновить список ведомостей:\nreloadGradeSheets(groupId)"
+endif
+
+--> "Обновить список групп:\nreloadGroups()"
+
+--> "Возврат sheetId"
+
+--> (*)
+
+@enduml

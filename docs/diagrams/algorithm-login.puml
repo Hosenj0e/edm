@@ -1,0 +1,52 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activityFontSize 11
+skinparam activityFontName Arial
+
+(*) --> "Ввод логина и пароля"
+
+--> "Нормализация логина\n(toLower, trim)"
+
+if "Логин или пароль\nпусты?" then
+  -->[да] "Установить ошибку:\nВведите логин и пароль"
+  --> (*)
+else
+  -->[нет] "Открытие БД\naccounts.sqlite"
+endif
+
+if "БД открыта\nуспешно?" then
+  -->[нет] "Установить ошибку:\nНе удалось открыть БД"
+  --> (*)
+else
+  -->[да] "Выполнить SQL-запрос:\nSELECT display_name, salt,\npassword_hash, role\nWHERE login = ?"
+endif
+
+if "Пользователь\nнайден?" then
+  -->[нет] "Установить ошибку:\nНеверный логин или пароль"
+  --> (*)
+else
+  -->[да] "Извлечь из БД:\n- display_name\n- salt (16 байт)\n- password_hash (32 байта)\n- role"
+endif
+
+--> "Вычислить hash пароля:\nPBKDF2-SHA256\n(password, salt,\n120000 итераций)"
+
+--> "Сравнить вычисленный hash\nс сохранённым hash\n(slowEqual)"
+
+if "Hash\nсовпадает?" then
+  -->[нет] "Установить ошибку:\nНеверный логин или пароль"
+  --> (*)
+else
+  -->[да] "Создать папку:\nusers/{login}/"
+endif
+
+--> "Установить переменные:\nm_login = login\nm_displayName = display_name\nm_role = role"
+
+--> "Отправить сигнал\nsessionChanged()"
+
+--> "Возврат true"
+
+--> (*)
+
+@enduml

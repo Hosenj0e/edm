@@ -1,0 +1,56 @@
+@startuml Create Document Flowchart
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #E1F5E1
+skinparam activityBorderColor #4CAF50
+skinparam activityDiamondBackgroundColor #FFF9C4
+skinparam activityDiamondBorderColor #FBC02D
+
+start
+:Пользователь нажимает
+"Создать документ";
+:Ввод названия
+и содержимого;
+:Вызов AppController.
+createDocument();
+
+if (DocumentService\nсуществует?) then (Нет)
+  #FFE1E1:Ошибка: сервис
+  не инициализирован;
+  stop
+else (Да)
+  :Генерация UUID
+  для документа;
+  :Вычисление SHA-256
+  хеша контента;
+  :Шифрование контента
+  AES-256-CBC;
+  :Сохранение в
+  vault/{docId}.enc;
+  
+  if (Файл\nсохранён?) then (Нет)
+    #FFE1E1:Ошибка записи файла;
+    stop
+  else (Да)
+    :Сохранение метаданных
+    в documents.sqlite;
+    
+    if (Метаданные\nсохранены?) then (Нет)
+      #FFE1E1:Ошибка записи в БД;
+      stop
+    else (Да)
+      :Создание записи
+      в approvals;
+      :Добавление задачи
+      в sync_queue;
+      :Вызов reloadDocuments();
+      :Обновление
+      DocumentListModel;
+      :Emit documentsModelChanged;
+      :Обновление UI;
+      #E1F5E1:Документ создан;
+      stop
+    endif
+  endif
+endif
+
+@enduml

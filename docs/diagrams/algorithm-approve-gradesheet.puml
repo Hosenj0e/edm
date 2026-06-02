@@ -1,0 +1,42 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activityFontSize 11
+skinparam activityFontName Arial
+
+(*) --> "Ввод параметра:\nsheetId"
+
+if "Сессия открыта?\nm_repo != nullptr" then
+  -->[нет] "Возврат false"
+  --> (*)
+else
+  -->[да] "Вызов метода репозитория:\napproveGradeSheet(sheetId,\nm_actorLogin)"
+endif
+
+note right
+  В репозитории выполняется:
+  UPDATE grade_sheets
+  SET status = 'approved',
+      approved_by = ?
+  WHERE id = ?
+end note
+
+if "Обновление\nуспешно?" then
+  -->[нет] "Возврат false"
+  --> (*)
+else
+  -->[да] "Отправить сигнал\npendingSheetsChanged()"
+endif
+
+note right
+  Обновляет UI:
+  - Список ожидающих ведомостей
+  - Счётчик в badge
+end note
+
+--> "Возврат true"
+
+--> (*)
+
+@enduml
