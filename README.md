@@ -127,21 +127,10 @@ ctest --test-dir build -C Debug --output-on-failure
 
 ---
 
-## Документация
-
-Полная документация находится в папке `docs/`:
-- `diploma-general-part.md` - Общая часть диплома
-- `diploma-special-part.md` - Специальная часть диплома
-- `architecture-diagrams.md` - Архитектура системы
-- `diagrams/` - PlantUML диаграммы
-
----
-
 ## Контакты
 
 По вопросам работы приложения:
 - GitHub: [Hosenj0e/edm](https://github.com/Hosenj0e/edm)
-- Email: artur.pezhemskiy@novsu.ru
 
 ---
 
