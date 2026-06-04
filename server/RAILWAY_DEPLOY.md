@@ -29,13 +29,35 @@
    - Нажмите "+ New Project"
    - Выберите "Deploy from GitHub repo"
    - Выберите репозиторий `edm`
-   - Railway автоматически обнаружит `railway.toml` и будет деплоить только `server/`
+   - Railway начнет сборку
    
-   **Если Railway пытается собрать Qt:**
-   - Перейдите в Settings → Build & Deploy
-   - Root Directory: `/server`
-   - Build Command: `npm install`
-   - Start Command: `npm start`
+3. **Настроить Root Directory (ВАЖНО!)**
+   
+   Так как в репозитории есть Qt проект в корне, нужно указать Railway использовать только папку `server/`:
+   
+   - Откройте созданный сервис
+   - Перейдите в **Settings** → **General**
+   - Найдите **Root Directory**
+   - Укажите: `server`
+   - Нажмите **Save**
+   
+   Railway автоматически пересоберет проект, теперь он найдет `package.json` и установит Node.js!
+   
+   **Альтернативный способ (через railway.json):**
+   
+   Создайте файл `railway.json` в корне репозитория:
+   ```json
+   {
+     "build": {
+       "builder": "NIXPACKS"
+     },
+     "deploy": {
+       "startCommand": "npm start"
+     }
+   }
+   ```
+   
+   И установите Root Directory в `server` через Settings.
 
 ### Вариант Б: Локальный деплой
 
@@ -256,6 +278,17 @@ Railway предоставляет **$5 бесплатно каждый меся
 ---
 
 ## 🛠 Troubleshooting
+
+### Проблема: "npm: command not found" при сборке
+
+**Причина:** Railway анализирует корень репозитория и видит Qt/C++ проект вместо Node.js.
+
+**Решение:**
+1. Откройте сервис в Railway Dashboard
+2. Settings → General → **Root Directory**
+3. Укажите: `server`
+4. Нажмите Save
+5. Railway автоматически пересоберет проект
 
 ### Проблема: "Build failed"
 

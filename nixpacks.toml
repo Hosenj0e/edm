@@ -1,0 +1,14 @@
+# Nixpacks конфигурация для Railway
+# Указываем Node.js провайдера
+
+[phases.setup]
+nixPkgs = ["nodejs_18"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["echo 'No build step needed'"]
+
+[start]
+cmd = "npm start"
