@@ -360,6 +360,7 @@ QVariantMap AppController::gradeSheetInfo(const QString& sheetId) const
     out.insert(QStringLiteral("disciplineName"), s.disciplineName);
     out.insert(QStringLiteral("examType"), s.examType);
     out.insert(QStringLiteral("createdAt"), s.createdAt);
+    out.insert(QStringLiteral("status"), s.status);
     return out;
 }
 

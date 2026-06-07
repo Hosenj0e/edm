@@ -66,6 +66,40 @@ Page {
                 font.bold: true
                 font.pixelSize: 16
             }
+            // Индикатор статуса ведомости
+            Label {
+                visible: page.sheetMeta.status && page.sheetMeta.status !== "draft"
+                text: {
+                    var st = page.sheetMeta.status || "draft"
+                    if (st === "pending_approval") return qsTr("⏳ На согласовании")
+                    if (st === "approved") return qsTr("✓ Утверждено")
+                    if (st === "rejected") return qsTr("✗ Отклонено")
+                    return ""
+                }
+                font.pixelSize: 12
+                color: {
+                    var st = page.sheetMeta.status || "draft"
+                    if (st === "pending_approval") return "#f59e0b"
+                    if (st === "approved") return "#10b981"
+                    if (st === "rejected") return "#ef4444"
+                    return "#6b7280"
+                }
+                font.bold: true
+                leftPadding: 8
+                rightPadding: 8
+                topPadding: 4
+                bottomPadding: 4
+                background: Rectangle {
+                    color: {
+                        var st = page.sheetMeta.status || "draft"
+                        if (st === "pending_approval") return "#fef3c7"
+                        if (st === "approved") return "#d1fae5"
+                        if (st === "rejected") return "#fee2e2"
+                        return "#f3f4f6"
+                    }
+                    radius: 4
+                }
+            }
             Item { Layout.fillWidth: true }
 
             // Кнопка скачать (только admin и deputy)
@@ -82,19 +116,22 @@ Page {
                 onClicked: printDialog.open()
             }
 
-            // Кнопка добавить студента (только admin и deputy)
+            // Кнопка добавить студента (только admin и deputy, и только для черновиков)
             Button {
                 text: qsTr("+ Студент")
                 highlighted: true
-                visible: appController.currentUserRole === "admin" || appController.currentUserRole === "deputy"
+                visible: (appController.currentUserRole === "admin" || appController.currentUserRole === "deputy") &&
+                        (page.sheetMeta.status === "draft" || !page.sheetMeta.status)
                 onClicked: addStudentDialog.open()
             }
 
-            // Кнопка отправить на согласование (только teacher)
+            // Кнопка отправить на согласование (только teacher, только для черновиков)
             Button {
                 text: qsTr("📤 На согласование")
                 highlighted: true
-                visible: appController.currentUserRole === "teacher"
+                visible: appController.currentUserRole === "teacher" && 
+                        (page.sheetMeta.status === "draft" || !page.sheetMeta.status)
+                enabled: studentsList.count > 0
                 onClicked: submitDialog.open()
             }
         }
@@ -408,6 +445,7 @@ Page {
                                         font.bold: text.length > 0
                                         text: grade || ""
                                         placeholderText: "—"
+                                        enabled: page.sheetMeta.status === "draft" || !page.sheetMeta.status
                                         validator: RegularExpressionValidator {
                                             regularExpression: /^[1-5]?$/
                                         }
@@ -462,9 +500,11 @@ Page {
                                             text: rowRect.editing ? "💾" : "✎"
                                             font.pixelSize: 14
                                             color: rowRect.editing ? "#16a34a" : "#2563eb"
+                                            opacity: (page.sheetMeta.status === "draft" || !page.sheetMeta.status) ? 1.0 : 0.3
                                             MouseArea {
                                                 anchors.fill: parent
                                                 cursorShape: Qt.PointingHandCursor
+                                                enabled: page.sheetMeta.status === "draft" || !page.sheetMeta.status
                                                 onClicked: {
                                                     if (rowRect.editing) {
                                                         // Сохраняем
@@ -491,9 +531,11 @@ Page {
                                             text: "✕"
                                             font.pixelSize: 14
                                             color: "#dc2626"
+                                            opacity: (page.sheetMeta.status === "draft" || !page.sheetMeta.status) ? 1.0 : 0.3
                                             MouseArea {
                                                 anchors.fill: parent
                                                 cursorShape: Qt.PointingHandCursor
+                                                enabled: page.sheetMeta.status === "draft" || !page.sheetMeta.status
                                                 onClicked: {
                                                     confirmDeleteDialog.studentId = studentId
                                                     confirmDeleteDialog.studentFio = fio
