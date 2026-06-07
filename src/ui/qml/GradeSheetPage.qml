@@ -102,35 +102,31 @@ Page {
             }
             Item { Layout.fillWidth: true }
 
-            // Кнопка скачать (только admin и deputy)
+            // Кнопка скачать
             Button {
                 text: qsTr("⬇ Скачать")
-                visible: appController.currentUserRole === "admin" || appController.currentUserRole === "deputy"
                 onClicked: saveDialog.open()
             }
 
             // Кнопка печать
             Button {
                 text: qsTr("🖨 Печать")
-                visible: appController.currentUserRole === "admin" || appController.currentUserRole === "deputy"
                 onClicked: printDialog.open()
             }
 
-            // Кнопка добавить студента (только admin и deputy, и только для черновиков)
+            // Кнопка добавить студента (только для черновиков)
             Button {
                 text: qsTr("+ Студент")
                 highlighted: true
-                visible: (appController.currentUserRole === "admin" || appController.currentUserRole === "deputy") &&
-                        (page.sheetMeta.status === "draft" || !page.sheetMeta.status)
+                visible: page.sheetMeta.status === "draft" || !page.sheetMeta.status
                 onClicked: addStudentDialog.open()
             }
 
-            // Кнопка отправить на согласование (только teacher, только для черновиков)
+            // Кнопка отправить на согласование (для всех ролей, только для черновиков)
             Button {
                 text: qsTr("📤 На согласование")
                 highlighted: true
-                visible: appController.currentUserRole === "teacher" && 
-                        (page.sheetMeta.status === "draft" || !page.sheetMeta.status)
+                visible: page.sheetMeta.status === "draft" || !page.sheetMeta.status
                 enabled: studentsList.count > 0
                 onClicked: submitDialog.open()
             }
